@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj": {}
+    "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj": {}
   },
   "projects": {
-    "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj": {
+    "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
-        "projectName": "isitlive.api",
-        "projectPath": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
+        "projectUniqueName": "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj",
+        "projectName": "IsItLive.Api",
+        "projectPath": "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj",
         "packagesPath": "/Users/morganc/.nuget/packages/",
-        "outputPath": "/Users/morganc/code/isitlive/isitlive.api/obj/",
+        "outputPath": "/Users/morganc/code/isitlive/IsItLive.Api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/morganc/.nuget/NuGet/NuGet.Config"
@@ -45,12 +45,18 @@
           "targetAlias": "net9.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.9, )"
+              "version": "[9.*, )"
             },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
-              "version": "[9.0.9, )"
+              "version": "[9.*, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             }
           },
           "imports": [
