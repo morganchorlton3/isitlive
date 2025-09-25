@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj": {}
+    "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj": {}
   },
   "projects": {
-    "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj": {
+    "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj",
+        "projectUniqueName": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
         "projectName": "IsItLive.Api",
-        "projectPath": "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj",
+        "projectPath": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
         "packagesPath": "/Users/morganc/.nuget/packages/",
-        "outputPath": "/Users/morganc/code/isitlive/IsItLive.Api/obj/",
+        "outputPath": "/Users/morganc/code/isitlive/isitlive.api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/morganc/.nuget/NuGet/NuGet.Config"

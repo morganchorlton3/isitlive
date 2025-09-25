@@ -3516,7 +3516,7 @@
     "version": "1.0.0",
     "restore": {
       "projectUniqueName": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
-      "projectName": "isitlive.api",
+      "projectName": "IsItLive.Api",
       "projectPath": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
       "packagesPath": "/Users/morganc/.nuget/packages/",
       "outputPath": "/Users/morganc/code/isitlive/isitlive.api/obj/",
