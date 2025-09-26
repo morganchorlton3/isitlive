@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MonitorEntity = IsItLive.Api.Models.Monitor;
 
-namespace IsItLive.Api.Data;
+namespace IsItLive.Api.Models;
 
 public sealed class AppDbContext : DbContext
 {
