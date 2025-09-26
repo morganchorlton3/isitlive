@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Net;
-using Microsoft.AspNetCore.Http.HttpResults;
+using IsItLive.Api.Data;
+using MonitorEntity = IsItLive.Api.Models.Monitor;
+using Microsoft.EntityFrameworkCore;
+using Monitor = System.Threading.Monitor;
 
 // ---------- Models / DTOs ----------
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +23,16 @@ builder.Services.AddSwaggerGen();
 // Shared HttpClient
 builder.Services.AddHttpClient("monitor");
 
+builder.Services.AddDbContext<AppDbContext>(opt =>
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 app.UseCors();
 
@@ -39,63 +48,20 @@ app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
 app.MapGet("/health", () => Results.Ok(new { status = "ok", ts = DateTimeOffset.UtcNow }));
 
-// ---------- In-memory store ----------
-var store = new ConcurrentDictionary<int, Monitor>();
-var nextId = 0;
-var m = new Monitor
-{
-    Id = Interlocked.Increment(ref nextId),
-    Name = "Google",
-    Url = "https://www.google.com",
-    Status = "UP",
-    LastCheckedUtc = DateTime.Now
-};
-store[m.Id] = m;
 
-// ---------- Endpoints ----------
 // List
-app.MapGet("/monitors", () =>
+app.MapGet("/monitors", async (AppDbContext db) =>
+    await db.Monitors.AsNoTracking().OrderBy(m => m.Name).ToListAsync());
+
+app.MapPost("/monitors", async (AppDbContext db, MonitorEntity m) =>
 {
-    var items = store.Values.OrderBy(m => m.Id).ToList();
-    return Results.Ok(items);
+    m.Id = Guid.NewGuid();
+    db.Monitors.Add(m);
+    await db.SaveChangesAsync();
+    return Results.Created($"/monitors/{m.Id}", m);
 });
 
-
-// ---------- Swagger ----------
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
-// app.UseSwagger();
-// app.UseSwaggerUI(o =>
-// {
-//     o.SwaggerEndpoint("/swagger/v1/swagger.json", "IsItLive API v1");
-//     o.RoutePrefix = "swagger";
-// });
-//
-// // Handy redirect from "/" to Swagger
-// app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
-
+app.MapGet("/monitors/{id:guid}", async (AppDbContext db, Guid id) =>
+    await db.Monitors.FindAsync(id) is { } m ? Results.Ok(m) : Results.NotFound());
 
 app.Run();
-
-public class Monitor
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = default!;
-    public string Url { get; set; } = default!;
-    public string Status { get; set; } = default!;
-    public DateTime? LastCheckedUtc { get; set; } = default!;
-}
-
-public record CreateMonitorRequest(string Name, string Url, int? CheckIntervalSeconds);
-public record UpdateMonitorRequest(string? Name, string? Url, bool? Enabled, int? CheckIntervalSeconds);
-
-public record CheckResultDto(
-    int MonitorId,
-    DateTimeOffset CheckedAt,
-    int StatusCode,
-    bool IsSuccess,
-    long ResponseTimeMs,
-    string? Error
-);
-
-// ---------- App setup ----------

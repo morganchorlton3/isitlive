@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "restore": {
         "projectUniqueName": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
-        "projectName": "IsItLive.Api",
+        "projectName": "isitlive.api",
         "projectPath": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
         "packagesPath": "/Users/morganc/.nuget/packages/",
         "outputPath": "/Users/morganc/code/isitlive/isitlive.api/obj/",
@@ -53,6 +53,16 @@
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.*, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.9, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
