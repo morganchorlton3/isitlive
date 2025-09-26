@@ -1,0 +1,80 @@
+﻿@page "/monitors"
+@inject MonitorsClient MonitorsClient
+
+<h3 class="mb-3">Monitors</h3>
+
+@if (error is not null)
+{
+    <div class="alert alert-danger">@error</div>
+}
+else if (loading)
+{
+    <p>Loading…</p>
+}
+else if (monitors.Count == 0)
+{
+    <div class="alert alert-warning">No monitors found.</div>
+}
+else
+{
+    <div class="mb-2">
+        <button class="btn btn-sm btn-secondary" @onclick="RefreshAsync">Refresh</button>
+    </div>
+    <table class="table table-sm table-striped align-middle">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Last Checked (local)</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var m in monitors)
+        {
+            <tr>
+                <td>@m.Name</td>
+                <td><a href="@m.Url" target="_blank" rel="noopener">@m.Url</a></td>
+                <td>
+                    <span class="badge @(m.Status?.ToUpperInvariant() == "UP" ? "bg-success" : "bg-danger")">
+                        @m.Status
+                    </span>
+                </td>
+                <td>@(m.LastCheckedUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? "—")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool loading = true;
+    private string? error;
+    private List<Monitor> monitors = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task RefreshAsync() => await LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        loading = true;
+        error = null;
+
+        try
+        {
+            monitors = (await MonitorsClient.GetMonitorsAsync()).OrderBy(m => m.Name).ToList();
+        }
+        catch (Exception ex)
+        {
+            error = $"Failed to load monitors: {ex.Message}";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}
