@@ -1,4 +1,4 @@
-using IsItLive.Api.Data;
+using IsItLive.Api.Models;
 using MonitorEntity = IsItLive.Api.Models.Monitor;
 using Microsoft.EntityFrameworkCore;
 using Monitor = System.Threading.Monitor;
