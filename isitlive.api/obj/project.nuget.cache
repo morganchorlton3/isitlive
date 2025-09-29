@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iRn7S61FzeQ=",
+  "dgSpecHash": "iSM7dGf+3F4=",
   "success": true,
-  "projectFilePath": "/Users/morganc/code/isitlive/isitlive.api/isitlive.api.csproj",
+  "projectFilePath": "/Users/morganc/code/isitlive/IsItLive.Api/IsItLive.Api.csproj",
   "expectedPackageFiles": [
     "/Users/morganc/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/morganc/.nuget/packages/microsoft.bcl.asyncinterfaces/7.0.0/microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",

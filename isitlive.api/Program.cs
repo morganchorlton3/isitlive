@@ -82,12 +82,20 @@ public partial class Program
         app.MapGet("/monitors", async (AppDbContext db) =>
             await db.Monitors.AsNoTracking().OrderBy(m => m.Name).ToListAsync());
 
-        app.MapPost("/monitors", async (AppDbContext db, MonitorEntity m) =>
+        app.MapPost("/monitors", async (AppDbContext db, CreateMonitorRequest request) =>
         {
-            m.Id = Guid.NewGuid();
-            db.Monitors.Add(m);
+            var monitor = new MonitorEntity
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                Url = request.Url,
+                Status = "UNKNOWN",
+                LastCheckedUtc = null
+            };
+            
+            db.Monitors.Add(monitor);
             await db.SaveChangesAsync();
-            return Results.Created($"/monitors/{m.Id}", m);
+            return Results.Created($"/monitors/{monitor.Id}", monitor);
         });
 
         app.MapGet("/monitors/{id:guid}", async (AppDbContext db, Guid id) =>

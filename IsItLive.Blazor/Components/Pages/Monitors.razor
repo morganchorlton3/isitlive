@@ -7,50 +7,68 @@
 {
     <div class="alert alert-danger">@error</div>
 }
-else if (loading)
+
+@if (successMessage is not null)
 {
-    <p>Loading…</p>
-}
-else if (monitors.Count == 0)
-{
-    <div class="alert alert-warning">No monitors found.</div>
-}
-else
-{
-    <div class="mb-2">
-        <button class="btn btn-sm btn-secondary" @onclick="RefreshAsync">Refresh</button>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @successMessage
+        <button type="button" class="btn-close" @onclick="() => successMessage = null"></button>
     </div>
-    <table class="table table-sm table-striped align-middle">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>URL</th>
-            <th>Status</th>
-            <th>Last Checked (local)</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var m in monitors)
-        {
-            <tr>
-                <td>@m.Name</td>
-                <td><a href="@m.Url" target="_blank" rel="noopener">@m.Url</a></td>
-                <td>
-                    <span class="badge @(m.Status?.ToUpperInvariant() == "UP" ? "bg-success" : "bg-danger")">
-                        @m.Status
-                    </span>
-                </td>
-                <td>@(m.LastCheckedUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? "—")</td>
-            </tr>
-        }
-        </tbody>
-    </table>
 }
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <MonitorForm @ref="monitorForm" OnMonitorCreated="HandleMonitorCreated" />
+    </div>
+    <div class="col-md-8">
+        @if (loading)
+        {
+            <p>Loading…</p>
+        }
+        else if (monitors.Count == 0)
+        {
+            <div class="alert alert-warning">No monitors found.</div>
+        }
+        else
+        {
+            <div class="mb-2">
+                <button class="btn btn-sm btn-secondary" @onclick="RefreshAsync">Refresh</button>
+            </div>
+            <table class="table table-sm table-striped align-middle">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Last Checked (local)</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var m in monitors)
+                {
+                    <tr>
+                        <td>@m.Name</td>
+                        <td><a href="@m.Url" target="_blank" rel="noopener">@m.Url</a></td>
+                        <td>
+                            <span class="badge @(m.Status?.ToUpperInvariant() == "UP" ? "bg-success" : "bg-danger")">
+                                @m.Status
+                            </span>
+                        </td>
+                        <td>@(m.LastCheckedUtc?.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss") ?? "—")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
 
 @code {
     private bool loading = true;
     private string? error;
+    private string? successMessage;
     private List<Monitor> monitors = new();
+    private MonitorForm? monitorForm;
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,6 +93,33 @@ else
         finally
         {
             loading = false;
+        }
+    }
+
+    private async Task HandleMonitorCreated(CreateMonitorRequest request)
+    {
+        Console.WriteLine($"HandleMonitorCreated called - Name: '{request.Name}', Url: '{request.Url}'");
+        try
+        {
+            var createdMonitor = await MonitorsClient.CreateMonitorAsync(request);
+            if (createdMonitor != null)
+            {
+                Console.WriteLine($"Monitor created successfully: {createdMonitor.Name}");
+                successMessage = $"Monitor '{createdMonitor.Name}' created successfully!";
+                await LoadAsync(); // Refresh the list
+                // Reset the form after successful creation
+                monitorForm?.ResetForm();
+            }
+            else
+            {
+                Console.WriteLine("Monitor creation returned null");
+                error = "Failed to create monitor. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception in HandleMonitorCreated: {ex}");
+            error = $"Failed to create monitor: {ex.Message}";
         }
     }
 }
